@@ -1,0 +1,92 @@
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
+</head>
+  <body>
+
+    <div id="todo">
+    </div>
+  </body>
+
+  <script type="text/jsx">
+
+    var ListItem = React.createClass({
+      render: function(){
+        return (
+          <li>{this.props.children}</li>
+        );
+      }
+    });
+
+    var Title = React.createClass({
+      render: function(){
+        return (
+          <h3>TODOs</h3>
+        );
+      }
+    });
+
+    var Form = React.createClass({
+      getInitialState: function() {
+        return {item: ''};
+        },
+      handleSubmit: function(e){
+        e.preventDefault();
+        this.props.onFormSubmit(this.state.item);
+        this.setState({item: ''});
+        React.findDOMNode(this.refs.item).focus();
+        return;
+      },
+      onChange: function(e){
+        this.setState({
+          item: e.target.value
+        });
+      },
+      render: function(){
+        return (
+          <form onSubmit={this.handleSubmit}>
+            <input type='text' ref='item' onChange={this.onChange} value={this.state.item}/>
+            <input type='submit' value='Add'/>
+          </form>
+        );
+      }
+    });
+
+    var List = React.createClass({
+      render: function() {
+      var createItem = function(itemText) {
+        return (
+            <ListItem>{itemText}</ListItem>
+          );
+      };
+      return <ul>{this.props.items.map(createItem)}</ul>;
+      }
+    });
+
+
+    var App = React.createClass({
+      getInitialState: function() {
+      return {items: ['Premade Item #1',
+                      'Premade Item #2']};
+      },
+      updateItems: function(newItem) {
+        var allItems = this.state.items.concat([newItem]);
+        this.setState({
+        items: allItems
+      });
+      },
+      render: function() {
+      return (
+        <div>
+        <Title/>
+        <List items={this.state.items}/>
+        <Form onFormSubmit={this.updateItems}/>
+        </div>
+      );
+      }
+    });
+
+    React.renderComponent(<App/>, document.getElementById('todo'));
+  </script>
+</html>
